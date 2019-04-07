@@ -1,0 +1,16 @@
+# To create deployment run the following command:
+kubectl apply -f nginx-app-dep.yaml
+kubectl get deployments
+kubectl get rs
+kubectl get pods
+# edit deployment
+kubectl set image deployment nginx-dep nginx=nginx:1.15.1
+kubectl edit deployment nginx-app => edit annotation, container image
+kubectl apply -f nginx-app-dep.yaml <= edit annotation, container image
+
+# rolling back to a previous revision
+kubectl rollout undo deployment nginx-app --to-revision=1
+kubectl rollout history deployment nginx-app 
+kubectl rollout status deployment nginx-app
+# scale deployment
+kubectl scale deployment nginx-dep2 --replicas=6

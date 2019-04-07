@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "Wordpress. Image wordpress:5.1.1-php7.1-apache"
+  name: wordpress-deploy
+  labels:
+    app: wp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wp
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: wp
+    spec:
+      containers:
+      - name: wp
+        image: wordpress:5.1.1-php7.1-apache
+        env:
+          - name: WD_DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: wordpress-credentials
+                key: WD_DB_HOST
+          - name: WD_DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: wordpress-credentials
+                key: WD_DB_USER
+          - name: WD_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: wordpress-credentials
+                key: WD_DB_PASSWORD
+          - name: WD_DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: wordpress-credentials
+                key: WD_DB_NAME
+
+                #- name: WD_DB_HOST
+                #  value: mysql-service
+                # - name: WD_DB_USER
+                #  value: wp_user
+                #       - name: WD_DB_PASSWORD
+                # value: password
+                #- name: WD_DB_NAME
+                # value: wp_db
+        ports:
+        - containerPort: 80
